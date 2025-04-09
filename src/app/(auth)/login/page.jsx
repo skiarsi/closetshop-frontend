@@ -4,7 +4,7 @@ import { doLoginCredential } from '@/actions/actions';
 import Navbar from '@/components/Navbar';
 import { useUser } from '@/lib/useUser';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react'
 
 export default function page() {
@@ -12,6 +12,7 @@ export default function page() {
   const [error, setError] = useState('');
 
   const user = useUser();
+  const router = useRouter();
 
 
   async function handleLogin(e) {
@@ -29,7 +30,8 @@ export default function page() {
       if(data.token){
         localStorage.setItem('token', data.token);
         document.cookie = `token=${data.token}; path=/;`;
-        redirect('/');
+        // redirect('/');
+        router.push('/');
       }
     } catch (error) {
       setError('error : '+error.message);

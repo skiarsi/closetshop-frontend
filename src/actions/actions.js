@@ -1,10 +1,14 @@
 'use server';
 
+import { cookies } from "next/headers";
+
+
+// login user use credentials
 export async function doLoginCredential(formData) {
   const email = formData.get('email');
   const password = formData.get('password');
   
-  const response = await fetch('http://localhost:8000/api/login', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -26,4 +30,24 @@ export async function doLoginCredential(formData) {
   }
   
   return data;
+}
+
+//logout user
+export async function logoutUser(){
+  const token = (await cookies()).get('token')?.value;
+
+  if(!token) return {success: false, message: 'no token found'};
+
+  await fetch(`${process.env.NEXT_PUBLIC_API_URL}/logout`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  (await cookies()).delete('token');
+
+  return {success: true}
 }
